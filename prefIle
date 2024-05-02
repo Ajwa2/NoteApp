@@ -1,0 +1,297 @@
+// import { Button, FlatList, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View,TouchableOpacity } from 'react-native'
+// import React, { useState } from 'react'
+// import Header from '../../components/Header'
+// import { Link, useLocalSearchParams } from 'expo-router';
+// import { MaterialIcons } from '@expo/vector-icons';
+// import { AntDesign } from '@expo/vector-icons';
+// import FallBack from '../../components/FallBack';
+// import { Colors } from '../../constants/Colors';
+// import TextList from '../Textlist';
+
+
+// const Homes = () => {
+
+//     const params = useLocalSearchParams();
+//     const [isModalVisible, setIsModalVisible] = useState(false)
+//     // const [todoList,SetTodoList] = useState([]);
+//     const [showTextInput, setShowTextInput] = useState(true)
+
+//     const HandleAddToDo = (task,description)=>{
+//         if(task && description === ''){
+//             return ; 
+//         }
+//         SetTodoList([...todoList, 
+//             {task, description}])
+//         setIsModalVisible(false)
+//     }
+
+//     const HandlePress=(task, description)=>{
+//         params.navigate('/TextList', {task, description, HandleAddToDo})
+//     }
+
+//     return (
+//         <View style={{ flex:1,
+//             backgroundColor: '#202020'}}>
+//             <Header/>
+//             <View>
+//                 <View style={styles.RenderItem}>
+//                     <Link href={
+//                             {pathname : '',
+//                             params:{ }
+//                             }
+//                         } style={{flex:1}}>
+//                         <View>
+//                             {/* <Text style={styles.RenderText}>{params.Task}</Text>
+//                             <Text>{params.Description}</Text> */}
+//                             <FlatList
+//                             data={todoList}
+//                             keyExtractor={(item,index)=>index.toString()}
+//                             renderItem={({item})=>{
+//                                 return (
+//                                     <View>
+//                                         <TouchableOpacity onPress={()=> HandlePress(item.task,item.description)}>
+//                                             <Text style={styles.RenderText}>{item.task}</Text>
+//                                             <Text>{item.description}</Text>
+//                                         </TouchableOpacity>
+//                                     </View>
+//                                 )
+//                             }}
+//                             style={styles.RenderText}
+//                             />
+//                         </View>
+//                     </Link>
+//                     <AntDesign name="delete" size={24} color="black" onPress={()=>handleDelete(params.Id)} />
+//                 </View>
+//                 {/* {params.todoList.length == 0  && <FallBack/>} */}
+//                 <View style={styles.AddContainer}>
+//                     <TouchableOpacity>
+//                         <MaterialIcons name="add-circle" size={55} color="#93478F" onPress={() => setIsModalVisible(true)} />
+//                     </TouchableOpacity>
+//                 </View>
+
+//                 <Modal 
+//                     visible={isModalVisible}
+//                     animationType='fade'
+//                     onRequestClose={()=>setIsModalVisible(false)}
+//                     transparent
+//                     >
+//                     <View style={styles.ModalContainer}>
+//                         <View style={styles.innerModal}>
+//                             <AntDesign name="closecircleo" size={20} color="#BBBBBB" style={{textAlign:'right'}} onPress={()=> setIsModalVisible(false)}/>
+//                             <Text style={styles.ModalText}>Add</Text>
+//                             <Link href={{
+//                                 pathname:'/Textlist',
+//                                 params:{HandleAddToDo}
+//                             }}
+//                                 style={styles.ModalNote} >
+//                                 <AntDesign name="filetext1" size={24} color='#BBBBBB' />
+//                                 <Text style={{color:'#FEFEFE',}}>Text</Text>
+//                             </Link>
+//                             <Link style={styles.ModalChecklist} href='/Cheklist'>
+//                                 <AntDesign name="checkcircle" size={24} color="#BBBBBB" />
+//                                 <Text style={{color:'#FEFEFE'}}>CheckList</Text>
+//                             </Link>
+//                         </View>
+//                     </View>
+//                 </Modal>
+//             </View>
+//         </View>
+//     )
+// }
+
+// const styles = StyleSheet.create({
+//     ModalContainer:{
+//         flex:1,
+//         justifyContent:'center',
+//         alignItems:'center',
+//         backgroundColor:'rgba(0, 0, 0, 0.5)',
+//     },
+//     ScreenContainer:{
+//         flex:1,
+//         backgroundColor: '#202020'
+//     },
+//     AddContainer:{
+//         alignItems:'center',
+//         marginTop:15,
+//     },
+//     ModalText:{
+//         fontWeight:'bold',
+//         fontSize:20,
+//         color:'#FEFEFE'
+//     },
+//     ModalNote:{
+//         flexDirection:'row',
+//         alignItems:'center',
+//         gap:15,
+//         paddingVertical:15,
+//     },
+//     ModalChecklist:{
+//         flexDirection:'row',
+//         alignItems:'center',
+//         gap:10,
+//     },
+//     innerModal:{
+//         width:"80%",
+//         backgroundColor:'#424242',
+//         paddingHorizontal:20,
+//         paddingVertical:20,
+//         borderRadius:10,
+//     },
+//     RenderItem:{
+//         backgroundColor:'#F2D6F1',
+//         borderRadius:6,
+//         paddingHorizontal:10,
+//         paddingVertical:5,
+//         marginHorizontal:20,
+//         marginTop:12,
+//         shadowColor:'black',
+//         shadowOffset:{width:0,height:2},
+//         shadowOpacity:0.8,
+//         shadowRadius:3,
+//         elevation:2,
+//         flexDirection:'row',
+//     },
+//     RenderIcon:{
+//         flexDirection:'row',
+//         gap:10
+//     },
+//     RenderText:{
+//         flex:1,
+//         fontSize:17,
+//     },
+// })
+
+// export default Home;
+
+// import { FlatList, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+// import React, { useState } from 'react'
+// import { AntDesign } from '@expo/vector-icons';
+// import { MaterialIcons } from '@expo/vector-icons';
+// import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+// import Home from './(tabs)/Home';
+
+
+
+// const TextList = () => {
+//     const params = useLocalSearchParams();
+//     const route = useRouter()
+//     console.log("textListParams",params)
+//     console.log('list of params', params.HandleAddToDo)
+//     console.log('list of params', params.task)
+//     const {  HandleAddToDo} = route.params
+//     const [showTextInput, setShowTextInput] = useState(true)
+//     const [addToDo, setAddToDo] = useState( '')
+//     const [addDescription, setAddDescription] = useState('')
+//     // const [todoList,SetTodoList] = useState([]);
+    
+    
+//     const [editTodo, setEditTodo] = useState(null)
+
+//     const handleTextChange = (userText)=>{
+//         setAddToDo(userText)
+//     }
+//     const handleDescription = (userDescription)=>{
+//         setAddDescription(userDescription)
+//     }
+
+//     const handleEdit = (addToDo)=>{
+//         console.log(addToDo)
+//         setEditTodo(addToDo)
+//         setAddToDo(addToDo.task)
+//         console.log('handleedit pressed',addToDo)
+//     }
+//     const HandleUpdate = ()=>{
+//         const updateTodo = todoList.map((item)=>{
+//             if(item.id === editTodo.id){
+//                 return {...item, task: addToDo}
+//             }
+//             return item
+//         })
+//         // SetTodoList(updateTodo)
+//         setEditTodo(null)
+//         setAddToDo('')
+//     }
+
+//     const handleDelete = (id)=>{
+//         const updatedTodoList = todoList.filter((addToDo)=>addToDo.id !== id )
+//         // SetTodoList(updatedTodoList)
+//     }
+
+//     const HandleSave = ()=>{
+//         HandleAddToDo(addToDo,addDescription)
+//     }
+
+//     return (
+//         <View style={styles.TextListContainer}>
+//             <>
+//                 <View>
+//                 </View>
+//                 {showTextInput && 
+//                 <View>
+//                     <View style={styles.TextInputContainer}>
+//                         <TextInput 
+//                             style={styles.AddTextArea}
+//                             placeholder='Add Tasks...'
+//                             value={addToDo}
+//                             onChangeText={handleTextChange}
+//                         />
+//                     </View>
+//                     <View style={styles.TextInputContainer}>
+//                         <TextInput
+//                             style={{textAlignVertical: 'top',...styles.AddTextArea}}
+//                             placeholder='Write a description...'
+//                             value={addDescription}
+//                             onChangeText={handleDescription}
+//                             multiline={true}
+//                             numberOfLines={10}
+//                         />
+//                     </View>
+//                     <AntDesign name="save" size={25} color="#C2C2C2" onPress={HandleSave} style={{marginTop:10,textAlign:'right',marginRight:15}}/>
+//                 </View>
+//                 }
+//             </>
+//         </View>
+//     )
+// }
+
+// const styless = StyleSheet.create({
+//     RenderItem:{
+//         backgroundColor:'#F2D6F1',
+//         borderRadius:6,
+//         paddingHorizontal:10,
+//         paddingVertical:5,
+//         marginHorizontal:20,
+//         marginTop:12,
+//         shadowColor:'black',
+//         shadowOffset:{width:0,height:2},
+//         shadowOpacity:0.8,
+//         shadowRadius:3,
+//         elevation:2,
+//         flexDirection:'row',
+//     },
+//     TextListContainer:{
+//         flex:1,
+//         backgroundColor:'#202020'
+//     },
+//     AddTextArea:{
+//         marginHorizontal:20,
+//         backgroundColor:'transparent',
+//         marginTop:12,
+//         paddingVertical:3,
+//         flex:1
+//     },
+//     TextInputContainer:{
+//         flexDirection:'row',
+//         alignItems:'center',
+//         justifyContent:'center',
+//         marginHorizontal:15,
+//         backgroundColor:'#F2D6F1',
+//         borderRadius:6,
+//         paddingHorizontal:5,
+//         marginTop:12,
+//         borderRadius:10
+//     },
+// })
+
+// export default TextList
+
