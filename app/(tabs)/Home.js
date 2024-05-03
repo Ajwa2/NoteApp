@@ -15,8 +15,6 @@ const Home = () => {
     const [todoList, setTodoList] = useState([]);
     const [isEdit, setIsEdit] = useState(false)
     const [currentItem, setCurrentItem] = useState(null)
-    const [checklistTitle, setChecklistTitle] = useState([])
-    
 
     const handleSave = (task, description) => {
         if (task && description === '') {
@@ -32,14 +30,9 @@ const Home = () => {
     const handleSaveInHome = (task,checklists)=>{
         setTodoList([...todoList,
             { task, checklists, date: new Date().getTime(), id: new Date() }])
-        navigation.goBack()
+        navigation.navigate()
     }
     console.log(todoList)
-
-    const handleCheckPress=(item)=>{
-        const {task,id} = item
-        navigation.navigate('checklist', {task, id, isEdit:true})
-    }
 
     const handleTextPress = (item) => {
         const { title, id } = item
@@ -51,7 +44,6 @@ const Home = () => {
         }else{
             navigation.navigate('checklist',{title,id})
         }
-        
         setIsEdit(true)
     }
 
@@ -99,16 +91,16 @@ const Home = () => {
                                         <Text style={styles.RenderText}>{limitText(item.task, 15)}</Text>
                                         {item.description && <Text style={{ color: 'grey' }}>{limitText(item.description,50)}</Text>}
                                         <Text style={{ fontSize: 12, textAlign: 'right', color: 'grey' }}>{moment(item.date).format('MMMM Do YYYY, h:mm:ss a')}</Text>
-                                        {item.checklists && <AntDesign name="check" size={24} color="#C2C2C2" />}
                                     </TouchableOpacity>
                                     <AntDesign name="delete" size={24} color="#C2C2C2" onPress={() => handleDelete(item.id)} />
+                                    {item.checklists && <AntDesign name="check" size={24} color="#C2C2C2" />}
                                 </View>
                             )
                         }}
                     />
                     
                 </View>
-                {todoList.length == 0 && checklistTitle.length==0 &&<FallBack />}
+                {todoList.length == 0 && <FallBack />}
                 <View style={styles.AddContainer}>
                     <TouchableOpacity>
                         <MaterialIcons name="add-circle" size={55} color="#93478F" onPress={() => setIsModalVisible(true)} />

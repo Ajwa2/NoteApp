@@ -1,4 +1,4 @@
-    import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -14,25 +14,24 @@ const Checklist = () => {
     const [addTitle,setAddTitle] = useState(title || '')
 
 
-    console.log(addChecklist)
-    console.log(addToChecklist)
+    console.log('checklist input',addChecklist)
+    console.log('array of the checklist',addToChecklist)
     console.log(addTitle)
     const handleOk = () => {
         setAddToChecklist([...addToChecklist,
         { id: new Date(), task: addChecklist, isCompleted: false, date: new Date().getTime() }])
         setIsModalVisible(false)
         // console.log('ok')
-
     }
 
     const handleSaveChecklist =()=>{
         handleSaveInHome(addTitle,addToChecklist)
-        console.log('save button clicked')
     }
 
     useEffect(() => {
         setAddTitle(title);
-    }, [title])
+        setAddToChecklist(addToChecklist)
+    }, [title,addToChecklist])
 
     return (
         <View style={styles.ChecklistScreen}>
