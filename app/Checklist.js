@@ -7,31 +7,27 @@ import { useRoute } from '@react-navigation/native';
 
 const Checklist = () => {
     const { params } = useRoute()
-    const {handleSaveInHome,title} = params
+    const {handleSaveInHome,task,checklists,id,isEdit} = params
     const [isModalVisible, setIsModalVisible] = useState(false)
     const [addChecklist, setAddChecklist] = useState('')
-    const [addToChecklist, setAddToChecklist] = useState([])
-    const [addTitle,setAddTitle] = useState(title || '')
+    const [addToChecklist, setAddToChecklist] = useState(checklists || [])
+    const [addTitle,setAddTitle] = useState(task || '')
 
 
-    console.log('checklist input',addChecklist)
-    console.log('array of the checklist',addToChecklist)
-    console.log(addTitle)
+
+    console.log("checklist", addTitle,addToChecklist,isEdit,id)
+
     const handleOk = () => {
         setAddToChecklist([...addToChecklist,
         { id: new Date(), task: addChecklist, isCompleted: false, date: new Date().getTime() }])
         setIsModalVisible(false)
-        // console.log('ok')
     }
 
     const handleSaveChecklist =()=>{
         handleSaveInHome(addTitle,addToChecklist)
     }
 
-    useEffect(() => {
-        setAddTitle(title);
-        setAddToChecklist(addToChecklist)
-    }, [title,addToChecklist])
+   
 
     return (
         <View style={styles.ChecklistScreen}>
