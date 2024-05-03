@@ -1,5 +1,5 @@
 import { Button, FlatList, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/Header'
 import { useNavigation } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -25,33 +25,29 @@ const Home = () => {
         setTodoList([...todoList,
             { task, description, date: new Date().getTime(), id: new Date() }])
         setIsModalVisible(false)
-        setIsEdit(true)
         navigation.navigate('Home')
     }
 
     const handleSaveInHome = (task,checklists)=>{
         setTodoList([...todoList,
             { task, checklists, date: new Date().getTime(), id: new Date() }])
-        navigation.goBack()
+            setIsModalVisible(false)
+            setIsEdit(true)
+            navigation.navigate('Home')
     }
-    console.log(todoList)
 
-    const handleCheckPress=(item)=>{
-        const {task,id} = item
-        navigation.navigate('checklist', {task, id, isEdit:true})
-    }
+    console.log("todoList", todoList,isEdit)
 
     const handleTextPress = (item) => {
-        const { title, id } = item
-        console.log(item)
+        const { task, description,id,checklists } = item
+        console.log("item from handleTextPress", item)
         setCurrentItem({ ...item })
         if(item.description){
             navigation.navigate('Textlist', 
-            {title, id, handleUpdates, isEdit: true })
+            {task, description, id, handleUpdates, isEdit: true })
         }else{
-            navigation.navigate('checklist',{title,id})
+            navigation.navigate('Checklist',{task, checklists, handleUpdates, id ,isEdit: true })
         }
-        
         setIsEdit(true)
     }
 
@@ -73,6 +69,7 @@ const Home = () => {
         const updatedTodoList = todoList.filter((addToDo) => addToDo.id !== id)
         setTodoList(updatedTodoList)
     }
+
     const limitText = (text, maxLength) => {
         if (text.length <= maxLength) {
             return text;
@@ -125,11 +122,11 @@ const Home = () => {
                         <View style={styles.innerModal}>
                             <AntDesign name="closecircleo" size={20} color="#BBBBBB" style={{ textAlign: 'right' }} onPress={() => setIsModalVisible(false)} />
                             <Text style={styles.ModalText}>Add</Text>
-                            <TouchableOpacity style={styles.ModalNote} onPress={() => navigation.navigate('Textlist', { handleSave, isEdit })}>
+                            <TouchableOpacity style={styles.ModalNote} onPress={() => navigation.navigate('Textlist', { handleSave, isEdit:false })}>
                                 <AntDesign name="filetext1" size={24} color='#BBBBBB' />
                                 <Text style={{ color: '#FEFEFE', }}>Text</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.ModalChecklist} onPress={() => navigation.navigate('Checklist', {handleSaveInHome,isEdit, setTodoList,todoList})}>
+                            <TouchableOpacity style={styles.ModalChecklist} onPress={() => navigation.navigate('Checklist', {handleSaveInHome,isEdit:false})}>
                                 <AntDesign name="checkcircle" size={24} color="#BBBBBB" />
                                 <Text style={{ color: '#FEFEFE' }}>CheckList</Text>
                             </TouchableOpacity>

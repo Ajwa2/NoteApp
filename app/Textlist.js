@@ -15,12 +15,13 @@ const TextList = () => {
     const [showTextField, setShowTextField] = useState(false)
 
 
-    console.log(isEdit, showTextField)
-    console.log(id)
-    useEffect(() => {
-        setCurrentTask(task)
-        setCurrentDescription(description)
-    }, [task, description])
+    console.log(isEdit, showTextField, id)
+    console.log(task, description, "Task, description")
+    
+    // useEffect(() => {
+    //     setCurrentTask(task)
+    //     setCurrentDescription(description)
+    // }, [task, description])
 
     const HandleSavePress = () => {
         handleSave(currentTask, curerntDescription)
