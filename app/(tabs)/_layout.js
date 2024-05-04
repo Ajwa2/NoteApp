@@ -23,12 +23,6 @@ export default function Layout(){
                 headerShown:false,
                 tabBarIcon:({focused})=> <AntDesign name="calendar" size={24} color={focused? "#93478F" : "#C2C2C2"} />
             }}/>
-            {/* <Tabs.Screen name="Add" options={{
-                tabBarLabel:'search',
-                tabBarLabelStyle:{color:'black'},
-                headerShown:false,
-                tabBarIcon:({focused})=> <AntDesign name="search1" size={24} color={focused? "#93478F" : "#C2C2C2"} />
-            }}/> */}
             <Tabs.Screen name="Search" options={{
                 tabBarLabel:'search',
                 tabBarLabelStyle:{color:'black'},
