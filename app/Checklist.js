@@ -1,21 +1,22 @@
-import { FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Button, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Ionicons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 
 const Checklist = () => {
     const { params } = useRoute()
-    const {handleSaveInHome,task,checklists,id,isEdit} = params
+    const { handleSaveInHome, task, checklists, id, isEdit,handleUpdates } = params
     const [isModalVisible, setIsModalVisible] = useState(false)
     const [addChecklist, setAddChecklist] = useState('')
     const [addToChecklist, setAddToChecklist] = useState(checklists || [])
-    const [addTitle,setAddTitle] = useState(task || '')
+    const [addTitle, setAddTitle] = useState(task || '')
+    const [showTextField, setShowTextField] = useState(false)
 
 
-
-    console.log("checklist", addTitle,addToChecklist,isEdit,id)
+    console.log("checklist", addTitle, addToChecklist, isEdit, id)
 
     const handleOk = () => {
         setAddToChecklist([...addToChecklist,
@@ -23,42 +24,84 @@ const Checklist = () => {
         setIsModalVisible(false)
     }
 
-    const handleSaveChecklist =()=>{
-        handleSaveInHome(addTitle,addToChecklist)
+    const handleSaveChecklist = () => {
+        handleSaveInHome(addTitle, addToChecklist)
     }
 
-   
+    const handleCompleted = (item) => {
+        const updatedChecklist = addToChecklist.map((checklistItem) => {
+            if (checklistItem.id === item.id) {
+                return {
+                    ...checklistItem,
+                    isCompleted: true,
+                };
+            }
+            return checklistItem;
+        });
+        setAddToChecklist(updatedChecklist);
+    }
+
+    const handleUpdate = () => {
+        handleUpdates(task, checklists, id)
+        console.log('edited', task, checklists, id)
+        setShowTextField(false)
+    }
 
     return (
         <View style={styles.ChecklistScreen}>
-            <View style={{display:'none',...styles.TextFieldContainer}}> 
-                <View style={styles.TextField}>
-                    <Text style={{flex:1,color:'white'}}>{addTitle}</Text>
-                    <MaterialIcons name="edit" size={24} color="#C2C2C2" />
+            {isEdit && !showTextField? <View style={styles.TextFieldContainer}>
+                <View style={styles.ButtonContainer}>
+                    <Button
+                        title={ 'edit'}
+                        onPress={() => setShowTextField(true)}
+                        color='#93478F'
+                    />
                 </View>
-            </View>
-            <View style={styles.TitleTextAreaContainer}>
-                <TextInput
-                    placeholder='Add Title'
-                    style={styles.TitleTextArea}
-                    value={addTitle}
-                    onChangeText={(userInput)=>setAddTitle(userInput)}
-                />
-                <Entypo name="save" size={24} color="black" onPress={handleSaveChecklist} />
-            </View>
-            <TouchableOpacity style={styles.AddContainer} onPress={() => setIsModalVisible(true)}>
-                <Ionicons name="add-circle-outline" size={30} color="#C2C2C2" />
-                <Text style={styles.CheckText}>Add Item</Text>
-            </TouchableOpacity>
+                <View style={styles.TextField}>
+                    <Text style={{ flex: 1, color: 'white', textAlign: "center" }}>{addTitle}</Text>
+                </View>
+            </View> : <>
+                {isEdit? <View style={styles.TitleTextAreaContainer}>
+                    <TextInput
+                        placeholder='Add Title'
+                        style={styles.TitleTextArea}
+                        value={addTitle}
+                        onChangeText={(userInput) => setAddTitle(userInput)}
+                    />
+                    <MaterialIcons name="update" size={24} color="black" onPress={handleUpdate}/>
+                </View>:<View style={styles.TitleTextAreaContainer}>
+                    <TextInput
+                        placeholder='Add Title'
+                        style={styles.TitleTextArea}
+                        value={addTitle}
+                        onChangeText={(userInput) => setAddTitle(userInput)}
+                    />
+                    <Entypo name="save" size={24} color="black" onPress={handleSaveChecklist} />
+                </View>}
+                <TouchableOpacity style={styles.AddContainer} onPress={() => setIsModalVisible(true)}>
+                    <Ionicons name="add-circle-outline" size={30} color="#C2C2C2" />
+                    <Text style={styles.CheckText}>Add Item</Text>
+                </TouchableOpacity>
+            </>}
 
             <FlatList
                 data={addToChecklist}
                 renderItem={({ item }) => {
                     return (
-                        <TouchableOpacity>
-                            <View style={styles.RenderItem}>
+                        <TouchableOpacity onPress={() => handleCompleted(item)}>
+                            {item.isCompleted == false ? <>
+                                {!isEdit? <View style={styles.RenderItem}>
                                 <Text style={{ color: "white" }}>{item.task}</Text>
-                            </View>
+                            </View>:<>
+                            <View style={styles.RenderItem}>
+                                <Text style={{ color: "white", flex:1 }}>{item.task}</Text>
+                                <AntDesign name="edit" size={24} color="black" />
+                            </View></>} 
+                            </>:
+                                <View style={{ opacity: 0.5, ...styles.RenderItem }}>
+                                    <View style={styles.Underline} />
+                                    <Text style={styles.CheckedItem}>{item.task}</Text>
+                                </View>}
                         </TouchableOpacity>
                     )
                 }}
@@ -152,33 +195,46 @@ const styles = StyleSheet.create({
         marginTop: 12,
         flexDirection: 'row',
     },
-    TitleTextAreaContainer:{
+    TitleTextAreaContainer: {
         marginHorizontal: 15,
         backgroundColor: '#F2D6F7',
         borderRadius: 6,
         paddingHorizontal: 5,
         marginTop: 12,
         borderRadius: 10,
-        flexDirection:'row',
-        alignItems:'center'
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     TitleTextArea: {
         marginHorizontal: 20,
         backgroundColor: 'transparent',
         marginTop: 12,
         paddingVertical: 3,
-        flex:1
+        flex: 1
     },
-    TextField:{
-        backgroundColor:'#524848',
-        paddingHorizontal:10,
-        paddingVertical:8,
-        flexDirection:'row'
+    TextField: {
+        backgroundColor: '#524848',
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        flexDirection: 'row'
     },
-    TextFieldContainer:{
-        marginHorizontal:20,
-        marginTop:20
-    }
+    TextFieldContainer: {
+        marginHorizontal: 20,
+        marginTop: 20
+    },
+    Underline: {
+        borderBottomColor: 'grey',
+        borderBottomWidth: 2,
+        width: '110%',
+        position: 'absolute',
+        top: 18,
+    },
+    CheckedItem: {
+        color: 'white',
+    },
+    ButtonContainer: {
+        marginBottom: 10,
+    },
 })
 
 export default Checklist

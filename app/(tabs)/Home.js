@@ -52,7 +52,10 @@ const Home = () => {
     const handleUpdates = (updatedTask, updatedDescription, id) => {
         const updateTodoList = todoList.map((item) => {
             if (item.id === id) {
-                return { ...item, task: updatedTask, description: updatedDescription }
+                if(item.description){
+                    return { ...item, task: updatedTask, description: updatedDescription }
+                }
+                return{...item,task:updatedTask, checklists:[updatedDescription]}
             }
             return { ...item };
         })
@@ -61,9 +64,7 @@ const Home = () => {
         setIsEdit(false)
     }
 
-
     const handleDelete = (id) => {
-        console.log('deleted')
         const updatedTodoList = todoList.filter((addToDo) => addToDo.id !== id)
         setTodoList(updatedTodoList)
     }
@@ -82,7 +83,7 @@ const Home = () => {
             backgroundColor: '#202020'
         }}>
             <Header />
-            <ScrollView>
+            <View>
                 <View>
                     <FlatList
                         data={todoList}
@@ -96,7 +97,7 @@ const Home = () => {
                                         <Text style={{ fontSize: 12, textAlign: 'right', color: 'grey' }}>{moment(item.date).format('MMMM Do YYYY, h:mm:ss a')}</Text>
                                     </TouchableOpacity>
                                     <AntDesign name="delete" size={24} color="#C2C2C2" onPress={() => handleDelete(item.id)} />
-                                    {item.checklists && <AntDesign name="check" size={24} color="#C2C2C2" />}
+                                    {limitText(item.checklists,15) && <AntDesign name="check" size={24} color="#C2C2C2" />}
                                 </View>
                             )
                         }}
@@ -131,7 +132,7 @@ const Home = () => {
                         </View>
                     </View>
                 </Modal>
-            </ScrollView>
+            </View>
         </View>
     )
 }

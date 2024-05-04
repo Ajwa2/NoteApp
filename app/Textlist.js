@@ -17,11 +17,6 @@ const TextList = () => {
 
     console.log(isEdit, showTextField, id)
     console.log(task, description, "Task, description")
-    
-    // useEffect(() => {
-    //     setCurrentTask(task)
-    //     setCurrentDescription(description)
-    // }, [task, description])
 
     const HandleSavePress = () => {
         handleSave(currentTask, curerntDescription)
