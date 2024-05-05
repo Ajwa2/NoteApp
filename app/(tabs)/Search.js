@@ -1,22 +1,10 @@
 import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { FontAwesome } from '@expo/vector-icons';
-import { useState } from 'react';
-import Home from './Home'
+
 
 
 const Search = () => {
-    const {todoList} = Home.props
-    const [searchItem, setSearchItem] = useState('')
-    const [searchResults, setSearchResults] = useState([])
-
-    console.log(todoList)
-
-    useEffect(()=>{
-        const filteredResults = todoList.filter((item)=> item.task.toLowerCase().includes(searchItem.toLowerCase()));
-        setSearchResults(filteredResults);
-    },[searchItem,todoList])
-
     return (
         <View style={styles.SearchScreen}>
             <View style={styles.SearchContainer}>
@@ -25,22 +13,8 @@ const Search = () => {
                     style={styles.TextInput}
                     placeholder='Search note...'
                     placeholderTextColor='#949292'
-                    value={searchItem}
-                    onChangeText={setSearchItem}
                 />
             </View>
-
-            <FlatList
-            data={searchResults}
-            keyExtractor={(item)=> item.id.toString()}
-            renderItem={({item})=>{
-                return (
-                    <View>
-                        <Text>{item.task}</Text>
-                    </View>
-                )
-            }}
-            />
         </View>
     )
 }

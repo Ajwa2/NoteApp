@@ -5,10 +5,12 @@ import { Entypo } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from 'expo-router';
 
 const Checklist = () => {
     const { params } = useRoute()
-    const { handleSaveInHome, task, checklists, id, isEdit,handleUpdates } = params
+    const navigation = useNavigation()
+    const { handleSaveInHome, task, checklists, id, isEdit, handleUpdates } = params
     const [isModalVisible, setIsModalVisible] = useState(false)
     const [addChecklist, setAddChecklist] = useState('')
     const [addToChecklist, setAddToChecklist] = useState(checklists || [])
@@ -22,7 +24,9 @@ const Checklist = () => {
         setAddToChecklist([...addToChecklist,
         { id: new Date(), task: addChecklist, isCompleted: false, date: new Date().getTime() }])
         setIsModalVisible(false)
+        setAddChecklist('')
     }
+
 
     const handleSaveChecklist = () => {
         handleSaveInHome(addTitle, addToChecklist)
@@ -33,7 +37,7 @@ const Checklist = () => {
             if (checklistItem.id === item.id) {
                 return {
                     ...checklistItem,
-                    isCompleted: true,
+                    isCompleted: !checklistItem.isCompleted,
                 };
             }
             return checklistItem;
@@ -47,37 +51,50 @@ const Checklist = () => {
         setShowTextField(false)
     }
 
+    const handleCancle =()=>{
+        navigation.navigate('Home')
+    }
+
     return (
         <View style={styles.ChecklistScreen}>
-            {isEdit && !showTextField? <View style={styles.TextFieldContainer}>
+            {isEdit && !showTextField ? <View style={styles.TextFieldContainer}>
                 <View style={styles.ButtonContainer}>
                     <Button
-                        title={ 'edit'}
+                        title={'edit'}
                         onPress={() => setShowTextField(true)}
                         color='#93478F'
                     />
                 </View>
                 <View style={styles.TextField}>
-                    <Text style={{ flex: 1, color: 'white', textAlign: "center" }}>{addTitle}</Text>
+                    <Text style={{ flex: 1, color: 'white', textAlign: "center", fontSize: 20 }}>{addTitle}</Text>
                 </View>
             </View> : <>
-                {isEdit? <View style={styles.TitleTextAreaContainer}>
+                {isEdit ? <>
+                    <View style={{ flexDirection: 'row', marginTop:5,marginHorizontal:5,justifyContent:'space-between'}}>
+                        <View style={{flex:1,marginRight:10}}><Button title='Cancle' color='#93478F' onPress={handleCancle}/></View>
+                        <View style={{flex:1}}><Button title='Update' color='#93478F' onPress={handleUpdate}/></View>
+                    </View>
+                    <View style={styles.TitleTextAreaContainer}>
                     <TextInput
                         placeholder='Add Title'
                         style={styles.TitleTextArea}
                         value={addTitle}
                         onChangeText={(userInput) => setAddTitle(userInput)}
                     />
-                    <MaterialIcons name="update" size={24} color="black" onPress={handleUpdate}/>
-                </View>:<View style={styles.TitleTextAreaContainer}>
-                    <TextInput
-                        placeholder='Add Title'
-                        style={styles.TitleTextArea}
-                        value={addTitle}
-                        onChangeText={(userInput) => setAddTitle(userInput)}
-                    />
-                    <Entypo name="save" size={24} color="black" onPress={handleSaveChecklist} />
-                </View>}
+                </View></> : <>
+                    <View style={{ flexDirection: 'row', marginTop:5,marginHorizontal:5,justifyContent:'space-between'}}>
+                        <View style={{flex:1,marginRight:10}}><Button title='Cancle' color='#93478F' onPress={handleCancle} /></View>
+                        <View style={{flex:1}}><Button title='Save' color='#93478F' onPress={handleSaveChecklist}/></View>
+                    </View>
+                    <View style={styles.TitleTextAreaContainer}>
+                        <TextInput
+                            placeholder='Add Title'
+                            style={styles.TitleTextArea}
+                            value={addTitle}
+                            onChangeText={(userInput) => setAddTitle(userInput)}
+                        />
+                    </View>
+                </>}
                 <TouchableOpacity style={styles.AddContainer} onPress={() => setIsModalVisible(true)}>
                     <Ionicons name="add-circle-outline" size={30} color="#C2C2C2" />
                     <Text style={styles.CheckText}>Add Item</Text>
@@ -90,14 +107,10 @@ const Checklist = () => {
                     return (
                         <TouchableOpacity onPress={() => handleCompleted(item)}>
                             {item.isCompleted == false ? <>
-                                {!isEdit? <View style={styles.RenderItem}>
-                                <Text style={{ color: "white" }}>{item.task}</Text>
-                            </View>:<>
-                            <View style={styles.RenderItem}>
-                                <Text style={{ color: "white", flex:1 }}>{item.task}</Text>
-                                <AntDesign name="edit" size={24} color="black" />
-                            </View></>} 
-                            </>:
+                                <View style={styles.RenderItem}>
+                                    <Text style={{ color: "white" }}>{item.task}</Text>
+                                </View>
+                            </> :
                                 <View style={{ opacity: 0.5, ...styles.RenderItem }}>
                                     <View style={styles.Underline} />
                                     <Text style={styles.CheckedItem}>{item.task}</Text>
@@ -106,6 +119,7 @@ const Checklist = () => {
                     )
                 }}
             />
+
 
             <Modal
                 visible={isModalVisible}

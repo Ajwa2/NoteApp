@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import FallBack from '../../components/FallBack';
 import moment from 'moment';
+import { FontAwesome } from '@expo/vector-icons';
 
 
 const Home = () => {
@@ -15,36 +16,54 @@ const Home = () => {
     const [todoList, setTodoList] = useState([]);
     const [isEdit, setIsEdit] = useState(false)
     const [currentItem, setCurrentItem] = useState(null)
+    const [searchText, setSearchText] = useState('');
+    const [filteredTodoList, setFilteredTodoList] = useState([]);
 
+
+    const filterTodoList = () => {
+        const filteredList = todoList.filter(item =>
+            item.task.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setFilteredTodoList(filteredList);
+    };
+
+    const handleSearchChange = text => {
+        setSearchText(text);
+        filterTodoList();
+    };
+    const clearSearch= ()=>{
+        setSearchText('');
+        setFilteredTodoList([]);
+    }
     const handleSave = (task, description) => {
         if (task && description === '') {
             return;
         }
         setTodoList([...todoList,
-            { task, description, date: new Date().getTime(), id: new Date() }])
+        { task, description, date: new Date().getTime(), id: new Date() }])
         setIsModalVisible(false)
         navigation.navigate('Home')
     }
 
-    const handleSaveInHome = (task,checklists)=>{
+    const handleSaveInHome = (task, checklists) => {
         setTodoList([...todoList,
-            { task, checklists, date: new Date().getTime(), id: new Date() }])
-            setIsModalVisible(false)
-            setIsEdit(true)
-            navigation.navigate('Home')
+        { task, checklists, date: new Date().getTime(), id: new Date() }])
+        setIsModalVisible(false)
+        setIsEdit(true)
+        navigation.navigate('Home')
     }
 
-    console.log("todoList", todoList,isEdit)
+    console.log("todoList", todoList, isEdit)
 
     const handleTextPress = (item) => {
-        const { task, description,id,checklists } = item
+        const { task, description, id, checklists } = item
         console.log("item from handleTextPress", item)
         setCurrentItem({ ...item })
-        if(item.description){
-            navigation.navigate('Textlist', 
-            {task, description, id, handleUpdates, isEdit: true })
-        }else{
-            navigation.navigate('Checklist',{task, checklists, handleUpdates, id ,isEdit: true })
+        if (item.description) {
+            navigation.navigate('Textlist',
+                { task, description, id, handleUpdates, isEdit: true })
+        } else {
+            navigation.navigate('Checklist', { task, checklists, handleUpdates, id, isEdit: true })
         }
         setIsEdit(true)
     }
@@ -52,10 +71,10 @@ const Home = () => {
     const handleUpdates = (updatedTask, updatedDescription, id) => {
         const updateTodoList = todoList.map((item) => {
             if (item.id === id) {
-                if(item.description){
+                if (item.description) {
                     return { ...item, task: updatedTask, description: updatedDescription }
                 }
-                return{...item,task:updatedTask, checklists:[updatedDescription]}
+                return { ...item, task: updatedTask, checklists: [updatedDescription] }
             }
             return { ...item };
         })
@@ -77,32 +96,50 @@ const Home = () => {
         }
     };
 
+    const sortTodoList = () => {
+        const sortedList = [...todoList].sort((a, b) => b.date - a.date);
+        return sortedList;
+    };
+
     return (
         <View style={{
             flex: 1,
             backgroundColor: '#202020'
         }}>
             <Header />
+            {/* <SearchBar todoList={todoList} /> */}
+            <View style={{flexDirection:'row',alignItems:'center',...styles.SearchContainer}}>
+                <View style={{flexDirection:'row',alignItems:'center',backgroundColor:'#524848',borderRadius:13,...styles.SearchContainer}}>
+                <FontAwesome name="search" size={20} color="black" />
+                <TextInput
+                    style={styles.SearchInput}
+                    placeholder="Search notes..."
+                    value={searchText}
+                    onChangeText={handleSearchChange}
+                />
+                {searchText.length > 0 && <AntDesign name="close" size={20} color="black" onPress={clearSearch} />}
+                </View>
+            </View>
             <View>
                 <View>
                     <FlatList
-                        data={todoList}
+                        data={filteredTodoList.length > 0 ? filteredTodoList : sortTodoList()}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => {
                             return (
                                 <View style={styles.RenderItem}>
+                                    {(item.checklists) && <AntDesign name="check" size={22} color="#C2C2C2" />}
                                     <TouchableOpacity style={{ flex: 1 }} onPress={() => handleTextPress(item)}>
                                         <Text style={styles.RenderText}>{limitText(item.task, 15)}</Text>
-                                        {item.description && <Text style={{ color: 'grey' }}>{limitText(item.description,50)}</Text>}
-                                        <Text style={{ fontSize: 12, textAlign: 'right', color: 'grey' }}>{moment(item.date).format('MMMM Do YYYY, h:mm:ss a')}</Text>
+                                        {item.description && <Text style={{ color: 'grey' }}>{limitText(item.description, 50)}</Text>}
+                                        <Text style={{ fontSize: 11, textAlign: 'right', color: 'grey' }}>{moment(item.date).format('MMMM Do YYYY, h:mm:ss a')}</Text>
                                     </TouchableOpacity>
-                                    <AntDesign name="delete" size={24} color="#C2C2C2" onPress={() => handleDelete(item.id)} />
-                                    {limitText(item.checklists,15) && <AntDesign name="check" size={24} color="#C2C2C2" />}
+                                    <MaterialIcons name="delete" size={22} color="#C2C2C2" onPress={() => handleDelete(item.id)} />
                                 </View>
                             )
                         }}
                     />
-                    
+
                 </View>
                 {todoList.length == 0 && <FallBack />}
                 <View style={styles.AddContainer}>
@@ -121,11 +158,11 @@ const Home = () => {
                         <View style={styles.innerModal}>
                             <AntDesign name="closecircleo" size={20} color="#BBBBBB" style={{ textAlign: 'right' }} onPress={() => setIsModalVisible(false)} />
                             <Text style={styles.ModalText}>Add</Text>
-                            <TouchableOpacity style={styles.ModalNote} onPress={() => navigation.navigate('Textlist', { handleSave, isEdit:false })}>
+                            <TouchableOpacity style={styles.ModalNote} onPress={() => navigation.navigate('Textlist', { handleSave, isEdit: false })}>
                                 <AntDesign name="filetext1" size={24} color='#BBBBBB' />
                                 <Text style={{ color: '#FEFEFE', }}>Text</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.ModalChecklist} onPress={() => navigation.navigate('Checklist', {handleSaveInHome,isEdit:false})}>
+                            <TouchableOpacity style={styles.ModalChecklist} onPress={() => navigation.navigate('Checklist', { handleSaveInHome, isEdit: false })}>
                                 <AntDesign name="checkcircle" size={24} color="#BBBBBB" />
                                 <Text style={{ color: '#FEFEFE' }}>CheckList</Text>
                             </TouchableOpacity>
@@ -199,9 +236,22 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold'
     },
-    ChecklistRenderItem:{
-        flexDirection:'row'
-    }
+    ChecklistRenderItem: {
+        flexDirection: 'row'
+    },
+    SearchContainer: {
+        paddingHorizontal: 15,
+        paddingTop: 5,
+        paddingBottom: 8,
+    },
+    SearchInput: {
+        backgroundColor: '#524848',
+        borderRadius: 8,
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        fontSize: 15,
+        flex:1,
+    },
 })
 
 export default Home
